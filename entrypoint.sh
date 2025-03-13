@@ -3,6 +3,10 @@
 IS_DOWN=0
 COUNT=0
 
+if [ -f "/conf/config.conf" ]; then
+    source "/conf/config.conf"
+fi
+
 mylog() {
     echo "$(date -u +"%Y-%m-%dT%H:%M:%S") - $1"
 }
@@ -20,10 +24,10 @@ curl -s \
 }
 
 while true; do
-    curl -s --head --connect-timeout 5 ${TESt_URL} > /dev/null
+    curl -s --head --connect-timeout 5 ${TEST_URL} > /dev/null
     if [ $? -eq 0 ]; then
         if [[ "${IS_DOWN}" -eq 1 ]]; then
-            mylog "Connection back"
+            mylog "Send message to admin (BACK)"
             alerte_admin "Connection back"
             IS_DOWN=0
         else
@@ -37,9 +41,11 @@ while true; do
     else
         DOWN_TIME=$((DOWN_TIME + INTERVAL))
         if [[ "${DOWN_TIME}" -ge "${TIMEOUT}" && "${IS_DOWN}" -eq 0 ]]; then
-            mylog "Connection loss"
+            mylog "Send message to admin (LOSS)"
             alerte_admin "Connection loss"
             IS_DOWN=1
+        else
+            mylog "Connection loss"
         fi
     fi
     sleep "${INTERVAL}"
