@@ -31,16 +31,26 @@ Defines a lightweight container environment for running the monitoring script.
 docker build -t bash-netalert .
 ```
 
-### **Running the Container**
+### **Running the Container (basic way)**
 ```sh
-docker run -e TEST_URL="https://www.google.com" \
+docker run -d --net host \
+           --name netalerte \
+           -e TEST_URL="https://www.google.com" \
            -e INTERVAL=5 \
            -e TIMEOUT=15 \
            -e LOG_ALIVE=30 \
            -e SENDER_API_URL="http://127.0.0.1:5000/send" \
            -e ADMIN_PHONES="0123456789" \
            -e LAB_NAME="TibHome" \
-           netalert
+           tibhome/bash-netalert:main
+```
+
+### **Running the Container (external config file)**
+```sh
+docker run -d --net host \
+            --name netalerte \
+            -v /my/path/config.conf:/config.conf \
+           tibhome/bash-netalert:main
 ```
 
 ### Environment Variables
