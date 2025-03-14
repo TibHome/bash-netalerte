@@ -5,7 +5,7 @@ Bsh script for alerting when connection loss
 NetAlert is a simple monitoring script that checks the connectivity of a specified URL. If the connection is lost for a defined period, it sends an alert to the administrator. Once the connection is restored, another notification is sent.
 
 ## Features
-- Periodic connectivity checks to a target URL.
+- Periodic connectivity checks to a target IP.
 - Logs connection status at defined intervals.
 - Sends alerts to administrators when a connection loss is detected and when it is restored.
 - Configurable parameters via environment variables.
@@ -19,7 +19,7 @@ This is the main script responsible for monitoring the target URL and sending al
 Defines a lightweight container environment for running the monitoring script.
 
 ## How It Works
-1. The script continuously checks the target URL (`TEST_URL`).
+1. The script continuously checks the target IP (`TEST_IP`).
 2. If the connection is lost beyond the timeout limit (`TIMEOUT`), an alert is sent.
 3. Once the connection is restored, another notification is sent.
 4. Status logs are periodically recorded based on (`LOG_ALIVE`).
@@ -35,7 +35,7 @@ docker build -t bash-netalert .
 ```sh
 docker run -d --net host \
            --name netalerte \
-           -e TEST_URL="https://www.google.com" \
+           -e TEST_IP="8.8.8.8" \
            -e INTERVAL=5 \
            -e TIMEOUT=15 \
            -e LOG_ALIVE=30 \
@@ -57,7 +57,7 @@ docker run -d --net host \
 
 | Variable        | Description                              | Default Value                      |
 |---------------|----------------------------------|--------------------------------|
-| `TESt_URL`    | URL to monitor                   | `https://www.google.com`      |
+| `TEST_IP`    | URL to monitor                   | `8.8.8.8`      |
 | `INTERVAL`    | Time interval between checks (s)  | `5`                            |
 | `TIMEOUT`     | Time before an alert is sent (s) | `15`                           |
 | `LOG_ALIVE`   | Logging interval (s)             | `30`                           |
