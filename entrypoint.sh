@@ -3,8 +3,8 @@
 IS_DOWN=0
 COUNT=0
 
-if [ -f "/conf/config.conf" ]; then
-    source "/conf/config.conf"
+if [ -f "/config.conf" ]; then
+    source "/config.conf"
 fi
 
 mylog() {
@@ -12,19 +12,19 @@ mylog() {
 }
 
 alerte_admin() {
-MESSAGE="[NetAlerte]
-${1}"
+    echo "[NetAlerte]" > /tmp/msg
+    echo "${1}" >> /tmp/msg
 
-curl -s \
-     --location "${SENDER_API_URL}" \
-     --header 'Content-Type: application/x-www-form-urlencoded' \
-     --data-urlencode "recipient=${ADMIN_PHONES}" \
-     --data-urlencode "message=${MESSAGE}" \
-     > /dev/null
+    curl -s \
+        --location "${SENDER_API_URL}" \
+        --header 'Content-Type: application/x-www-form-urlencoded' \
+        --data-urlencode "recipient=${ADMIN_PHONES}" \
+        --data-urlencode "message=$(cat /tmp/msg)" \
+        > /dev/null
 }
 
 while true; do
-    curl -s --head --connect-timeout 5 ${TEST_URL} > /dev/null
+    ping -c 1 -W 2 ${TEST_IP} > /dev/null 2>&1
     if [ $? -eq 0 ]; then
         if [[ "${IS_DOWN}" -eq 1 ]]; then
             mylog "Send message to admin (BACK)"
